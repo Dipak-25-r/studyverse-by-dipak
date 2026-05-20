@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subject Matrix Selection - StudyVerse</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="min-h-screen flex flex-col">
+  <div id="global-loader" class="loader-container"><div class="spinner"></div></div>
+  <header id="global-navbar"></header>
+
+  <main class="flex-grow max-w-5xl w-full mx-auto px-6 py-12 space-y-8">
+    <div class="space-y-1">
+      <div class="flex items-center space-x-2 text-xs font-mono text-gray-500">
+        <a href="stds.html" class="hover:text-indigo-400 transition-colors">Vaults</a>
+        <span>/</span>
+        <span id="breadcrumb-std" class="text-gray-400">Target Standard</span>
+      </div>
+      <h2 class="text-3xl font-extrabold tracking-tight">Indexed Subjects</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="subject-query-grid">
+      <div class="text-gray-500 text-xs font-mono py-4 col-span-2">Extracting relational modules match matrices from Firestore catalogs...</div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { db } from "../firebase/config.js";
+    import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const URLParams = new URLSearchParams(window.location.search);
+      const selectedStd = URLParams.get("std") || "Standard 09";
+      document.getElementById("breadcrumb-std").innerText = selectedStd;
+
+      try {
+        const q = query(collection(db, "notes"), where("standard", "==", selectedStd));
+        const snapshot = await getDocs(q);
+        const targetGrid = document.getElementById("subject-query-grid");
+
+        if (!snapshot.empty) {
+          const uniqueSubjects = new Set();
+          snapshot.forEach(doc => uniqueSubjects.add(doc.data().subject));
+
+          let bufferHtml = "";
+          uniqueSubjects.forEach(subjectName => {
+            const encodedUrl = encodeURIComponent(selectedStd);
+            const encodedSub = encodeURIComponent(subjectName);
+            bufferHtml += `
+              <a href="chapter.html?std=${encodedUrl}&sub=${encodedSub}" class="glass-card p-6 rounded-xl border border-gray-800/60 hover:border-indigo-500/40 flex items-center space-x-4 transition-all">
+                <div class="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 text-lg"><i class="fas fa-atom"></i></div>
+                <div>
+                  <h4 class="text-sm font-bold tracking-wide text-gray-200">${subjectName}</h4>
+                  <p class="text-[11px] text-gray-500 font-mono">Click to parse segment indexes</p>
+                </div>
+              </a>`;
+          });
+          targetGrid.innerHTML = bufferHtml;
+        } else {
+          targetGrid.innerHTML = `<div class="text-gray-500 text-xs font-mono py-6 col-span-2">No documents mapped to this directory index yet. Try uploading first.</div>`;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  </script>
+  <script src="../js/app.js"></script>
+</body>
+</html>
