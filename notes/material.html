@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Material Vault Assets - StudyVerse</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="min-h-screen flex flex-col">
+  <div id="global-loader" class="loader-container"><div class="spinner"></div></div>
+  <header id="global-navbar"></header>
+
+  <main class="flex-grow max-w-5xl w-full mx-auto px-6 py-12 space-y-8">
+    <div class="space-y-1">
+      <div class="flex items-center space-x-2 text-xs font-mono text-gray-500">
+        <a href="stds.html" class="hover:text-indigo-400 transition-colors">Vaults</a>
+        <span>/</span>
+        <a id="breadcrumb-std" class="hover:text-indigo-400 transition-colors">Standard</a>
+        <span>/</span>
+        <a id="breadcrumb-sub" class="hover:text-indigo-400 transition-colors">Subject</a>
+        <span>/</span>
+        <span id="breadcrumb-ch" class="text-gray-400">Chapter</span>
+      </div>
+      <h2 class="text-3xl font-extrabold tracking-tight">Compiled Payloads</h2>
+    </div>
+
+    <div class="grid grid-cols-1 gap-8" id="material-payloads-stack">
+      <div class="text-gray-500 text-xs font-mono p-4">Resolving binary payload streams from index records...</div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { db } from "../firebase/config.js";
+    import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const URLParams = new URLSearchParams(window.location.search);
+      const targetStd = URLParams.get("std") || "";
+      const targetSub = URLParams.get("sub") || "";
+      const targetCh = URLParams.get("ch") || "";
+
+      document.getElementById("breadcrumb-std").innerText = targetStd;
+      document.getElementById("breadcrumb-std").href = `subject.html?std=${encodeURIComponent(targetStd)}`;
+      document.getElementById("breadcrumb-sub").innerText = targetSub;
+      document.getElementById("breadcrumb-sub").href = `chapter.html?std=${encodeURIComponent(targetStd)}&sub=${encodeURIComponent(targetSub)}`;
+      document.getElementById("breadcrumb-ch").innerText = targetCh.length > 25 ? targetCh.substring(0, 25) + "..." : targetCh;
+
+      try {
+        const q = query(
+          collection(db, "notes"), 
+          where("standard", "==", targetStd), 
+          where("subject", "==", targetSub),
+          where("chapter", "==", targetCh)
+        );
+        const snapshot = await getDocs(q);
+        const stackContainer = document.getElementById("material-payloads-stack");
+
+        if (!snapshot.empty) {
+          let bufferHtml = "";
+          snapshot.forEach(doc => {
+            const asset = doc.data();
+            bufferHtml += `
+              <div class="glass-card p-6 rounded-2xl border border-gray-800/60 space-y-6 shadow-xl">
+                <div class="border-b border-gray-800/40 pb-3 flex items-start justify-between">
+                  <div>
+                    <h3 class="text-lg font-bold tracking-wide text-gray-100">${asset.title}</h3>
+                    <p class="text-[10px] text-gray-500 font-mono mt-0.5">Uploaded by ${asset.uploaderName} | ${new Date(asset.timestamp).toLocaleDateString()}</p>
+                  </div>
+                </div>
+                <p class="text-xs text-gray-300 leading-relaxed font-light">${asset.description}</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                  ${asset.pdfUrl ? `
+                    <div class="glass-card p-4 rounded-xl border border-gray-800/80 bg-slate-900/30 flex items-center justify-between">
+                      <div class="flex items-center space-x-3">
+                        <i class="fas fa-file-pdf text-red-400 text-xl"></i>
+                        <span class="text-xs font-semibold text-gray-300">Document Node Reference</span>
+                      </div>
+                      <a href="${asset.pdfUrl}" target="_blank" class="px-4 py-2 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-lg text-xs font-bold transition-all"><i class="fas fa-external-link-alt"></i> Open</a>
+                    </div>
+                  ` : ""}
+                  
+                  ${asset.imageUrl ? `
+                    <div class="glass-card p-4 rounded-xl border border-gray-800/80 bg-slate-900/30 space-y-3">
+                      <div class="flex items-center space-x-3">
+                        <i class="fas fa-image text-pink-400 text-sm"></i>
+                        <span class="text-xs font-semibold text-gray-300">Vector Diagram Asset</span>
+                      </div>
+                      <div class="rounded-lg overflow-hidden border border-gray-900 bg-black max-h-48 flex items-center justify-center">
+                        <img src="${asset.imageUrl}" class="w-full h-full object-cover" alt="Spatially Cached Resource Graphic">
+                      </div>
+                    </div>
+                  ` : ""}
+                </div>
+
+                ${asset.videoUrl ? `
+                  <div class="glass-card p-4 rounded-xl border border-gray-800/80 bg-slate-900/30 space-y-3">
+                    <div class="flex items-center space-x-3">
+                      <i class="fas fa-video text-indigo-400 text-sm"></i>
+                      <span class="text-xs font-semibold text-gray-300">Video Demonstration Playback Loop</span>
+                    </div>
+                    <div class="rounded-xl overflow-hidden border border-gray-900 bg-black">
+                      <video src="${asset.videoUrl}" controls class="w-full max-h-80"></video>
+                    </div>
+                  </div>
+                ` : ""}
+              </div>`;
+          });
+          stackContainer.innerHTML = bufferHtml;
+        } else {
+          stackContainer.innerHTML = `<div class="text-gray-500 text-xs font-mono p-4">No physical binary tracking maps linked onto active record references.</div>`;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  </script>
+  <script src="../js/app.js"></script>
+</body>
+</html>
