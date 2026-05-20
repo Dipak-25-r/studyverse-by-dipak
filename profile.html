@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Identity Ledger - StudyVerse</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen flex flex-col">
+  <div id="global-loader" class="loader-container"><div class="spinner"></div></div>
+  <header id="global-navbar"></header>
+
+  <main class="flex-grow max-w-4xl w-full mx-auto px-6 py-12 space-y-10">
+    <div class="glass-card rounded-2xl p-6 md:p-8 border border-gray-800/60 flex flex-col md:flex-row items-center md:items-start gap-6 shadow-2xl">
+      <div class="w-24 h-24 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-1 flex-shrink-0">
+        <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center text-3xl font-bold tracking-wider text-indigo-400" id="profile-avatar">--</div>
+      </div>
+      <div class="flex-grow space-y-4 text-center md:text-left w-full">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div>
+            <h2 class="text-2xl font-bold tracking-tight" id="profile-name">--- ---</h2>
+            <p class="text-xs text-indigo-400 font-semibold uppercase tracking-wider mt-0.5" id="profile-profession">---</p>
+          </div>
+          <a href="settings.html" class="px-5 py-2 rounded-xl text-xs font-semibold border border-gray-700 hover:bg-gray-800/50 transition-colors">Edit Workspace</a>
+        </div>
+        <p class="text-xs text-gray-400 leading-relaxed max-w-xl mx-auto md:mx-0" id="profile-bio">---</p>
+        <div class="flex justify-center md:justify-start gap-8 text-xs pt-2 border-t border-gray-800/40">
+          <div><span class="font-bold text-gray-200" id="count-followers">0</span> <span class="text-gray-500">Followers</span></div>
+          <div><span class="font-bold text-gray-200" id="count-following">0</span> <span class="text-gray-500">Following</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <h3 class="text-sm font-bold uppercase tracking-widest text-gray-400 px-2">Personal Activity Stream</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6" id="profile-posts-grid">
+        <div class="text-gray-500 text-xs py-6 px-2">Querying personal database tracking nodes...</div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { routeGuard } from "./js/auth.js";
+    import { db } from "./firebase/config.js";
+    import { collection, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const data = await routeGuard();
+      if(data) {
+        document.getElementById("profile-name").innerText = data.name;
+        document.getElementById("profile-profession").innerText = data.profession || "Workspace Member";
+        document.getElementById("profile-bio").innerText = data.bio || "No description set.";
+        document.getElementById("profile-avatar").innerText = data.name.substring(0,2).toUpperCase();
+        document.getElementById("count-followers").innerText = data.followers?.length || 0;
+        document.getElementById("count-following").innerText = data.following?.length || 0;
+
+        try {
+          const q = query(collection(db, "posts"), where("uploaderUid", "==", data.uid), orderBy("timestamp", "desc"));
+          const snapshot = await getDocs(q);
+          const grid = document.getElementById("profile-posts-grid");
+          if(!snapshot.empty) {
+            let buffer = "";
+            snapshot.forEach(doc => {
+              const post = doc.data();
+              buffer += `
+                <div class="glass-card p-5 rounded-xl border border-gray-800/60 space-y-3 hover:border-indigo-500/40 transition-colors">
+                  <p class="text-xs text-gray-400 font-mono">${new Date(post.timestamp).toLocaleDateString()}</p>
+                  <p class="text-xs text-gray-200 line-clamp-3">${post.text}</p>
+                  <div class="text-[11px] text-indigo-400 font-medium"><i class="fas fa-heart mr-1"></i> ${post.likes?.length || 0} Likes</div>
+                </div>`;
+            });
+            grid.innerHTML = buffer;
+          } else {
+            grid.innerHTML = `<div class="text-gray-500 text-xs py-6 px-2 col-span-2">No transactional documents executed by this account yet.</div>`;
+          }
+        } catch(e) {
+          console.error(e);
+        }
+      }
+    });
+  </script>
+  <script src="js/app.js"></script>
+</body>
+</html>
