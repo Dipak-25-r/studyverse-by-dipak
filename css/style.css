@@ -1,0 +1,130 @@
+/* ==========================================================================
+   STUDYVERSE GLOBAL DESIGN SYSTEM FRAMEWORK
+   Architectural Pattern: Notion Minimal Structuralism + Instagram Glassmorphism
+   System Engineer: Dipak R Solanki
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+/* --- Root Token Definitions (Dark Architecture Default) --- */
+:root {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  --bg-main: #030712;         /* Tailwind Slate 950 */
+  --bg-surface: rgba(17, 24, 39, 0.45); /* Tailwind Slate 900 with Alpha */
+  --border-color: rgba(31, 41, 55, 0.6); /* Tailwind Slate 800 */
+  --text-main: #f9fafb;       /* White/Gray 50 */
+  --text-muted: #9ca3af;      /* Gray 400 */
+}
+
+/* --- Dynamic Luminance State (Light Architecture) --- */
+.light-theme {
+  --bg-main: #f8fafc;         /* Tailwind Slate 50 */
+  --bg-surface: rgba(255, 255, 255, 0.7); 
+  --border-color: rgba(226, 232, 240, 0.8); /* Tailwind Slate 200 */
+  --text-main: #0f172a;       /* Tailwind Slate 900 */
+  --text-muted: #64748b;      /* Tailwind Slate 500 */
+}
+
+/* --- Base Normalization Blocks --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  overflow-x: hidden;
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Custom Spatial Components (Notion + Instagram Minimal Mix) --- */
+.glass-card {
+  background-color: var(--bg-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-color: var(--border-color);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.light-theme .glass-card {
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+}
+
+/* --- Global Loading Animation Pipeline Matrix --- */
+.loader-container {
+  position: fixed;
+  inset: 0;
+  background-color: #030712;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.light-theme .loader-container {
+  background-color: #f8fafc;
+}
+
+.loader-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(99, 102, 241, 0.1);
+  border-top-color: #6366f1; /* Indigo 500 */
+  border-radius: 50%;
+  animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* --- Component Specific Overrides & Tweaks --- */
+input, textarea, select {
+  font-family: var(--font-sans);
+}
+
+.font-mono {
+  font-family: var(--font-mono) !important;
+}
+
+/* Custom Scrollbar Architecture for Chat/Feeds Layouts */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.25);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.45);
+}
+
+/* --- Custom Animations Framework Layout --- */
+.animate-fade-in {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
