@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gateway Terminal - StudyVerse by Dipak</title>
+  <meta name="description" content="Secure identity interface for access execution across StudyVerse spaces.">
+  <meta name="author" content="Dipak R Solanki">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen flex flex-col">
+  <div id="global-loader" class="loader-container"><div class="spinner"></div></div>
+  <header id="global-navbar"></header>
+
+  <main class="flex-grow flex items-center justify-center px-4 py-12 relative">
+    <div class="glass-card w-full max-w-lg rounded-2xl p-8 border border-gray-800/60 shadow-2xl z-10">
+      <div class="flex justify-center mb-8 border-b border-gray-800/80 pb-4">
+        <button id="tab-login" class="flex-1 text-center font-semibold text-lg pb-2 text-indigo-500 border-b-2 border-indigo-500 focus:outline-none transition-all">Sign In</button>
+        <button id="tab-signup" class="flex-1 text-center font-semibold text-lg pb-2 text-gray-400 focus:outline-none transition-all">Create Space</button>
+      </div>
+
+      <div id="auth-alert" class="hidden mb-4 p-4 rounded-xl text-sm border"></div>
+
+      <form id="form-login" class="space-y-5">
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Email Address</label>
+          <input type="email" id="login-email" required class="w-full bg-slate-900/50 border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors" placeholder="user@domain.com">
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Secret Password</label>
+          <input type="password" id="login-password" required class="w-full bg-slate-900/50 border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors" placeholder="••••••••">
+        </div>
+        <button type="submit" class="w-full py-3 mt-4 rounded-xl font-medium bg-indigo-500 hover:bg-indigo-600 text-white transition-all shadow-lg shadow-indigo-500/20">Authorize Session</button>
+      </form>
+
+      <form id="form-signup" class="space-y-4 hidden">
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-1">Full Legal Name</label>
+          <input type="text" id="sign-name" required class="w-full bg-slate-900/50 border border-gray-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors" placeholder="Alex Mercer">
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-1">Physical Address / Hub</label>
+          <input type="text" id="sign-address" required class="w-full bg-slate-900/50 border border-gray-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors" placeholder="San Francisco, CA">
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-1">Contact Protocol (Phone)</label>
+          <input type="tel" id="sign-contact" required class="w-full bg-slate-900/50 border border-gray-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors" placeholder="+1234567890">
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-1">Email Endpoint</label>
+          <input type="email" id="sign-email" required class="w-full bg-slate-900/50 border border-gray-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors" placeholder="alex@endpoint.io">
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-1">Establish Password</label>
+          <input type="password" id="sign-password" required class="w-full bg-slate-900/50 border border-gray-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors" placeholder="••••••••">
+        </div>
+        <button type="submit" class="w-full py-3 mt-4 rounded-xl font-medium bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white transition-all shadow-lg">Commit Node Registration</button>
+      </form>
+    </div>
+  </main>
+
+  <script type="module" src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
