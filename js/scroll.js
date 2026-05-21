@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const scrollIntersectionObserverOptions = {
     root: null, // Utilize native browser main viewport bounding containers
     rootMargin: "0px",
-    threshold: 0.15 // Animate elements when 15% visibility factor returns true
+    threshold: 0.15 // Animate elements when 15% visibility factor returns true 
   };
 
   const structuralObserverInstance = new IntersectionObserver((monitoredDOMElementEntriesArray, operationalObserverReference) => {
