@@ -1,0 +1,20 @@
+/* ==========================================================================
+   STUDYVERSE CONTROL PANEL MANAGEMENT LAYER SYSTEM STYLES
+   ========================================================================== */
+
+#admin-gatekeeper-barrier {
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+}
+
+/* Scroll tracking customization modules optimization styles within lists queues */
+#staged-questions-visual-feedback-queue::-webkit-scrollbar {
+  width: 4px;
+}
+#staged-questions-visual-feedback-queue::-webkit-scrollbar-thumb {
+  background: rgba(168, 85, 247, 0.3);
+  border-radius: 4px;
+}
+#staged-questions-visual-feedback-queue::-webkit-scrollbar-thumb:hover {
+  background: rgba(168, 85, 247, 0.5);
+}
