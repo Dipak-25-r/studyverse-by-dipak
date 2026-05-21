@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Central Control Core - StudyVerse Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="min-h-screen bg-slate-950 text-white selection:bg-purple-500/30 font-sans">
+  
+  <header id="global-navbar"></header>
+
+  <div id="admin-gatekeeper-barrier" class="fixed inset-0 bg-slate-950/95 z-50 flex items-center justify-center p-4">
+    <div class="glass-card max-w-sm w-full rounded-2xl p-6 border border-gray-800 text-center space-y-4 shadow-2xl">
+      <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center text-lg mx-auto"><i class="fas fa-shield-alt"></i></div>
+      <div>
+        <h3 class="text-base font-bold tracking-tight">System Guard Verification Required</h3>
+        <p class="text-[11px] text-gray-500 mt-0.5">Input the master token signature to map workspace access ports.</p>
+      </div>
+      <form id="admin-barrier-gate-form" class="space-y-3">
+        <input type="password" id="admin-secret-gate-input" required class="w-full bg-slate-900 border border-gray-800 rounded-xl px-4 py-2.5 text-xs text-center font-mono focus:outline-none focus:border-purple-500 text-white tracking-widest" placeholder="••••••••••••">
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs tracking-wide transition-all shadow-lg shadow-purple-600/10">Authorize Key</button>
+      </form>
+      <p id="gatekeeper-error-log" class="hidden text-[10px] font-mono text-red-400 bg-red-500/10 border border-red-500/20 py-1.5 rounded-lg"></p>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 py-8 space-y-8 hidden" id="admin-primary-workspace">
+    <div class="border-b border-gray-900 pb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h2 class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400 tracking-tight">Ecosystem Operations Workspace</h2>
+        <p class="text-xs text-gray-400 mt-0.5 font-mono">Dynamic execution matrix monitoring active datastore branches.</p>
+      </div>
+      <span class="self-start sm:self-center px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-mono uppercase font-bold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Terminal Sessions Active</span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <section class="glass-card rounded-2xl p-5 border border-gray-800 space-y-5 h-fit">
+        <div class="flex items-center space-x-2 border-b border-gray-900 pb-2">
+          <i class="fas fa-ad text-sm text-purple-400"></i>
+          <h3 class="text-xs uppercase font-bold tracking-wider text-gray-300">Distributed Advertising Matrix</h3>
+        </div>
+        <div id="ad-panel-status-feedback" class="hidden text-[10px] font-mono p-2.5 rounded-lg border"></div>
+        
+        <form id="admin-advertising-mutation-form" class="space-y-4 text-xs font-medium">
+          <div>
+            <label class="block text-[10px] uppercase font-mono text-gray-400 mb-1.5">Target Placement Node Node</label>
+            <select id="ad-form-target-node" class="w-full bg-slate-900 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none text-gray-300">
+              <option value="bannerAd">Top/Bottom Banner Asset Node</option>
+              <option value="popupAd">Interstitial Modal Popup Trigger</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] uppercase font-mono text-gray-400 mb-1.5">Staging Status Parameters</label>
+            <select id="ad-form-active-state" class="w-full bg-slate-900 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none text-gray-300">
+              <option value="true">Active Node Execution Vector (ON)</option>
+              <option value="false">Deactivate Deployment (OFF)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] uppercase font-mono text-gray-400 mb-1.5">Inject Code Asset Vector (HTML Embed Link / Script)</label>
+            <textarea id="ad-form-injected-payload" rows="5" required class="w-full bg-slate-900 border border-gray-800 rounded-xl p-3 text-xs font-mono focus:outline-none focus:border-purple-500 text-white" placeholder="<div class='ad-mock'>Asset Placeholder Trace</div>"></textarea>
+          </div>
+          <button type="submit" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all shadow-md">Commit Ad State Token</button>
+        </form>
+      </section>
+
+      <section class="lg:col-span-2 glass-card rounded-2xl p-5 border border-gray-800 space-y-5">
+        <div class="flex items-center space-x-2 border-b border-gray-900 pb-2">
+          <i class="fas fa-vial text-sm text-pink-400"></i>
+          <h3 class="text-xs uppercase font-bold tracking-wider text-gray-300">Assessment Ledger Ingestion Inversion Engine</h3>
+        </div>
+        <div id="quiz-panel-status-feedback" class="hidden text-[10px] font-mono p-2.5 rounded-lg border"></div>
+
+        <form id="admin-quiz-generation-form" class="space-y-5 text-xs">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-[10px] uppercase font-mono text-gray-400 mb-1.5">Evaluation Scope Title</label>
+              <input type="text" id="quiz-meta-title" required class="w-full bg-slate-900 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none" placeholder="E.g., Quantum Mechanics Part A">
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase font-mono text-gray-400 mb-1.5">Total Allocation (Seconds per Question)</label>
+              <input type="number" id="quiz-meta-timer" required class="w-full bg-slate-900 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none font-mono" value="30">
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase font-mono text-gray-400 mb-1.5">Scoring Output Strategy Protocol</label>
+              <select id="quiz-meta-approval-strategy" class="w-full bg-slate-900 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none">
+                <option value="instant">Instant Automatic Telemetry Calculation</option>
+                <option value="manual">Require Manual Administrative Audit Release</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="border border-gray-900 p-4 rounded-xl bg-slate-900/10 space-y-4">
+            <span class="text-[10px] font-mono bg-purple-500/10 border border-purple-500/20 text-purple-400 px-2 py-0.5 rounded-md uppercase font-bold">Dynamic Question Node Buffer</span>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="md:col-span-2">
+                <label class="block text-[10px] uppercase font-mono text-gray-400 mb-1">Prompt Query Text Structure</label>
+                <input type="text" id="q-builder-text" class="w-full bg-slate-900 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none" placeholder="Enter evaluation query statement...">
+              </div>
+              <div>
+                <label class="block text-[10px] uppercase font-mono text-gray-400 mb-1">Multimedia Mode Type</label>
+                <select id="q-builder-media-type" class="w-full bg-slate-900 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none">
+                  <option value="none">Standard Plaintext Structural Node</option>
+                  <option value="audio">Audio Resource Audio Node</option>
+                  <option value="video">Video Resource Broadcast Segment</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[10px] uppercase font-mono text-gray-400 mb-1">Multimedia File URL Anchor Link Path (Optional Placeholder Field)</label>
+              <input type="url" id="q-builder-media-url" class="w-full bg-slate-900 border border-gray-800 rounded-xl px-3 py-2 text-xs font-mono focus:outline-none" placeholder="https://example-bucket.com/asset.mp4">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <input type="text" id="q-builder-opt-0" class="w-full bg-slate-900 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none" placeholder="Option Index A">
+              <input type="text" id="q-builder-opt-1" class="w-full bg-slate-900 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none" placeholder="Option Index B">
+              <input type="text" id="q-builder-opt-2" class="w-full bg-slate-900 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none" placeholder="Option Index C">
+              <input type="text" id="q-builder-opt-3" class="w-full bg-slate-900 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none" placeholder="Option Index D">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-[10px] uppercase font-mono text-gray-400 mb-1">Target Accurate Array Mapping Key Code</label>
+                <select id="q-builder-correct-key" class="w-full bg-slate-900 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none text-emerald-400 font-bold">
+                  <option value="0">Option A</option><option value="1">Option B</option><option value="2">Option C</option><option value="3">Option D</option>
+                </select>
+              </div>
+              <div class="flex items-end">
+                <button type="button" id="append-compiled-question-node-btn" class="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-gray-800 text-gray-300 font-bold transition-all text-xs"><i class="fas fa-plus-circle text-[11px] mr-1 text-purple-400"></i> Push to Active Blueprint Queue</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <h4 class="text-[10px] uppercase font-mono tracking-wider text-gray-400 flex justify-between">
+              <span>Staged Sub-Nodes Pipeline Stack Monitor</span>
+              <span id="staged-questions-count" class="text-pink-400 font-bold">0 Staged</span>
+            </h4>
+            <div id="staged-questions-visual-feedback-queue" class="max-h-40 overflow-y-auto border border-gray-900 rounded-xl bg-slate-950 p-2 text-[11px] font-mono text-gray-500 divide-y divide-gray-900">
+              <div class="p-2 text-center">Staged blueprint structure array allocation parameters are empty.</div>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xs font-bold transition-all tracking-wider uppercase shadow-lg">Commit Full Compiled Assessment Vault Node</button>
+        </form>
+      </section>
+
+    </div>
+  </main>
+
+  <script type="module" src="js/admin.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
