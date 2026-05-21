@@ -128,3 +128,16 @@ input, textarea, select {
   from { opacity: 0; transform: translateY(-4px); }
   to { opacity: 1; transform: translateY(0); }
 }
+/* --- High Performance GPU-Assisted Scroll Animation System Framework --- */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(24px);
+  will-change: transform, opacity;
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-animate-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
