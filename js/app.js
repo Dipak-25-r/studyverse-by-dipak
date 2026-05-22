@@ -140,3 +140,33 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+import { routeGuard } from "./identity.js"; // Double check if identity.js is in your js folder
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Execute the identity guard routine immediately on page initialization
+  routeGuard()
+    .then((session) => {
+      // TARGET THE LOADER: Find the loader by its HTML ID
+      const loader = document.getElementById("global-loader");
+      if (loader) {
+        // Hide it using a class or manual style assignment
+        loader.style.display = "none"; 
+        // Note: If you prefer Tailwind utility states, use: loader.classList.add("hidden");
+      }
+
+      // Check session context
+      if (session && session.authenticated) {
+        console.log(`StudyVerse session established for user context: ${session.name}`);
+        // You can run any home-page specific features for logged-in users here
+      } else {
+        console.log("Viewing StudyVerse home page as a guest workspace member.");
+      }
+    })
+    .catch((error) => {
+      console.error("Critical identity sync error on main thread:", error);
+      
+      // EMERGENCY FALLBACK: Turn off the loader anyway so the page doesn't break
+      const loader = document.getElementById("global-loader");
+      if (loader) loader.style.display = "none";
+    });
+});
