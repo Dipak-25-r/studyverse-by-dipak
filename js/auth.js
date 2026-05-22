@@ -1,5 +1,5 @@
 /**
- * StudyVerse Identity Framework Module
+ * StudyVerse Identity Framework Module (auth.js)
  * Architectural responsibility: Multi-tenant credential verification, Session Lifecycle hooks, 
  * database mutations on registration, and navigation route guards.
  */
@@ -14,42 +14,49 @@ import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/f
 
 // Global Guard Middleware protecting sensitive application routing contexts
 export async function routeGuard() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     onAuthStateChanged(auth, async (user) => {
       const path = window.location.pathname;
+      
+      // Define exactly which pages REQUIRE a login to see
+      const isPrivateRoute = path.includes("profile.html") || 
+                             path.includes("settings.html") || 
+                             path.includes("upload.html") || 
+                             path.includes("chat.html");
 
       if (!user) {
         localStorage.removeItem("user_uid");
-        // Force redirect unauthorized traffic out if accessing private spaces
-        if (path.includes("profile.html") || path.includes("settings.html") || path.includes("upload.html") || path.includes("chat.html")) {
+        
+        // Force redirect unauthorized traffic out ONLY if accessing private routes
+        if (isPrivateRoute) {
           window.location.href = "login.html";
+          return; // Stop execution here for redirection
         }
         
-        // FIX: Provide an explicit unauthorized status so your UI scripts 
-        // can explicitly know to hide the loading animation on public pages.
+        // If on a public page, resolve gracefully as a guest workspace member
         resolve({ authenticated: false, user: null });
       } else {
         localStorage.setItem("user_uid", user.uid);
         
         try {
           const snapshot = await getDoc(doc(db, "users", user.uid));
-          // FIX: Return an authenticated flag along with data, fall back to empty object if doc doesn't exist yet
+          // Return an authenticated flag along with user database profiles
           resolve({ 
             authenticated: true, 
             uid: user.uid, 
             ...(snapshot.exists() ? snapshot.data() : {}) 
           });
         } catch (error) {
-          console.error("Error fetching user profile payload:", error);
-          // FIX: Don't stall the application if Firestore fails; let the UI know authentication passed
-          resolve({ authenticated: true, uid: user.uid, error: error.message });
+          console.error("Error fetching user profile payload from Firestore:", error);
+          // Fallback so application execution doesn't stall if database fails
+          resolve({ authenticated: true, uid: user.uid });
         }
       }
     });
   });
 }
 
-// Attach UI Event Processors if running natively on login window frame
+// Attach UI Event Processors natively if running on the login window frame
 document.addEventListener("DOMContentLoaded", () => {
   const tabLogin = document.getElementById("tab-login");
   const tabSignup = document.getElementById("tab-signup");
