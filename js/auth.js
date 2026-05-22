@@ -44,12 +44,13 @@ export async function routeGuard() {
           resolve({ 
             authenticated: true, 
             uid: user.uid, 
+            name: user.displayName || (snapshot.exists() ? snapshot.data().name : "Workspace Member"),
             ...(snapshot.exists() ? snapshot.data() : {}) 
           });
         } catch (error) {
           console.error("Error fetching user profile payload from Firestore:", error);
           // Fallback so application execution doesn't stall if database fails
-          resolve({ authenticated: true, uid: user.uid });
+          resolve({ authenticated: true, uid: user.uid, name: user.displayName || "Workspace Member" });
         }
       }
     });
