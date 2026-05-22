@@ -9,14 +9,15 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase
 import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
 const firebaseConfig = {
-  apiKey: "PASTE_YOUR_ACTUAL_API_KEY_HERE",
+  apiKey: "AIzaSyDlZCxkZjZTmd67vlvSEelJlFOoB3MjBcg",
   authDomain: "studyverse-by-dipak.firebaseapp.com",
   projectId: "studyverse-by-dipak",
-  storageBucket: "studyverse-by-dipak.appspot.com",
-  messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID_HERE",
-  appId: "PASTE_YOUR_APP_ID_HERE",
-  measurementId: "PASTE_YOUR_MEASUREMENT_ID_HERE" 
+  storageBucket: "studyverse-by-dipak.firebasestorage.app",
+  messagingSenderId: "811811751165",
+  appId: "1:811811751165:web:40deed4afc0c9b5f57aa94",
+  measurementId: "G-GN9C869FQB"
 };
+
 
 const app = initializeApp(firebaseConfig);
 
