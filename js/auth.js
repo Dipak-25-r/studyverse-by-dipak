@@ -1,7 +1,7 @@
 /**
  * StudyVerse Identity Framework Module (auth.js)
  * Architectural responsibility: Multi-tenant credential verification, Session Lifecycle hooks, 
- * database mutations on registration, and navigation route guards.
+ * database mutations on registration, and navigation route guards with anti-hang resolution.
  */
 
 import { auth, db } from "../firebase/config.js";
@@ -15,7 +15,36 @@ import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/f
 // Global Guard Middleware protecting sensitive application routing contexts
 export async function routeGuard() {
   return new Promise((resolve) => {
+    let internalStateResolved = false;
+
+    // 1. ANTI-HANG SAFETY LIFECYCLE: Bypasses infinite loader loops if network/Firebase throttles token validation
+    const safetyGraceTimeout = setTimeout(() => {
+      if (!internalStateResolved) {
+        internalStateResolved = true;
+        console.warn("Ecosystem Identity Framework: Token synchronization timed out. Falling back to Guest context.");
+        
+        const path = window.location.pathname;
+        const isPrivateRoute = path.includes("profile.html") || 
+                               path.includes("settings.html") || 
+                               path.includes("upload.html") || 
+                               path.includes("chat.html");
+
+        if (isPrivateRoute) {
+          window.location.href = "login.html";
+        } else {
+          resolve({ authenticated: false, user: null });
+        }
+      }
+    }, 1200); // 1.2 Second maximize grace threshold
+
+    // 2. Main Auth Listener Thread Entry
     onAuthStateChanged(auth, async (user) => {
+      // Clear safety timer immediately if Firebase responds ahead of schedule
+      clearTimeout(safetyGraceTimeout);
+      
+      if (internalStateResolved) return;
+      internalStateResolved = true;
+
       const path = window.location.pathname;
       
       // Define exactly which pages REQUIRE a login to see
@@ -30,7 +59,7 @@ export async function routeGuard() {
         // Force redirect unauthorized traffic out ONLY if accessing private routes
         if (isPrivateRoute) {
           window.location.href = "login.html";
-          return; // Stop execution here for redirection
+          return; 
         }
         
         // If on a public page, resolve gracefully as a guest workspace member
