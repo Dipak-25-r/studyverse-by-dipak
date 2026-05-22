@@ -1,22 +1,18 @@
 /**
  * StudyVerse by Dipak - Core Application Engine & Navigation Router
  * Architectural responsibility: Global state management, UI theme persistence,
- * dynamic header injection, and real-time Firebase Google Authentication.
+ * dynamic header injection, real-time Firebase Google Authentication, and safe route routing.
  */
 
 import { auth, loginWithGoogle, logoutUser } from "./firebase/config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { routeGuard } from "./auth.js"; 
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Initialize Global Loader Dismissal Engine
-  const loader = document.getElementById("global-loader");
-  if (loader) {
-    setTimeout(() => {
-      loader.classList.add("loader-hidden");
-    }, 450);
-  }
 
-  // 2. Enforce System Custom Dark/Light Themes
+  // ==========================================
+  // 1. ENFORCE CUSTOM SYSTEM THEMES
+  // ==========================================
   const persistedTheme = localStorage.getItem("theme") || "dark";
   if (persistedTheme === "light") {
     document.documentElement.classList.add("light-theme");
@@ -24,7 +20,43 @@ document.addEventListener("DOMContentLoaded", () => {
     document.documentElement.classList.remove("light-theme");
   }
 
-  // 3. Reactively Build, Inject, and Update Navigation Bar via Firebase Auth State
+  // ==========================================
+  // 2. RUN ROUTE GUARD & DISMISS LOADER
+  // ==========================================
+  routeGuard()
+    .then((session) => {
+      // Safely target your custom layout loader screen
+      const loader = document.getElementById("global-loader");
+      if (loader) {
+        // Trigger your CSS fade layout setup transitions smoothly
+        loader.classList.add("loader-hidden");
+        
+        // Ensure standard DOM layout clickability returns after transition completes
+        setTimeout(() => {
+          loader.style.display = "none";
+        }, 450);
+      }
+
+      if (session && session.authenticated) {
+        console.log(`StudyVerse workspace mapped: ${session.name || "Active Node"}`);
+      } else {
+        console.log("Viewing StudyVerse workspace structures as a guest node.");
+      }
+    })
+    .catch((error) => {
+      console.error("Critical identity sync error on main orchestrator thread:", error);
+      
+      // Emergency failsafe bypass: drop the overlay completely so the app remains interactive
+      const loader = document.getElementById("global-loader");
+      if (loader) {
+        loader.classList.add("loader-hidden");
+        loader.style.display = "none";
+      }
+    });
+
+  // ==========================================
+  // 3. REACTIVELY BUILD & INJECT NAVBAR
+  // ==========================================
   const navbarContainer = document.getElementById("global-navbar");
   if (navbarContainer) {
     
@@ -47,8 +79,8 @@ document.addEventListener("DOMContentLoaded", () => {
         authDesktopHTML = `
           <div class="flex items-center space-x-3">
             <div class="flex items-center gap-2 bg-slate-900/50 pl-2 pr-3 py-1 rounded-full border border-gray-800">
-              <img src="${user.photoURL}" alt="avatar" class="w-6 h-6 rounded-full object-cover">
-              <span class="text-xs font-medium text-gray-300">Hi, ${user.displayName.split(' ')[0]}</span>
+              <img src="${user.photoURL || base + 'img/default-avatar.png'}" alt="avatar" class="w-6 h-6 rounded-full object-cover">
+              <span class="text-xs font-medium text-gray-300">Hi, ${(user.displayName || "User").split(' ')[0]}</span>
             </div>
             <a href="${base}upload.html" class="px-3.5 py-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500 hover:text-white border border-indigo-500/20 transition-all"><i class="fas fa-cloud-upload-alt mr-1"></i> Ingest</a>
             <a href="${base}profile.html" class="hover:text-white transition-colors"><i class="fas fa-user-circle mr-1"></i> Identity</a>
@@ -59,8 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         authMobileHTML = `
           <div class="flex items-center gap-2 px-2 py-1 bg-slate-900/40 rounded-xl mb-2">
-            <img src="${user.photoURL}" alt="avatar" class="w-6 h-6 rounded-full">
-            <span class="text-xs text-gray-300">Hi, ${user.displayName}</span>
+            <img src="${user.photoURL || base + 'img/default-avatar.png'}" alt="avatar" class="w-6 h-6 rounded-full">
+            <span class="text-xs text-gray-300">Hi, ${user.displayName || "User"}</span>
           </div>
           <a href="${base}upload.html" class="hover:text-white py-1 transition-colors"><i class="fas fa-cloud-upload-alt w-5"></i> Ingest Engine</a>
           <a href="${base}profile.html" class="hover:text-white py-1 transition-colors"><i class="fas fa-user-circle w-5"></i> Identity Ledger</a>
@@ -114,7 +146,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 4. Hook Button Actions & Menu Interceptors
+  // ==========================================
+  // 4. ACTION CONTROLLERS & MENU COUPLINGS
+  // ==========================================
   function bindAuthListeners() {
     // Desktop & Mobile Login Buttons
     const triggerLogin = () => loginWithGoogle().catch(err => console.error("Login crashed:", err));
@@ -139,34 +173,4 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   }
-});
-import { routeGuard } from "./identity.js"; // Double check if identity.js is in your js folder
-
-document.addEventListener("DOMContentLoaded", () => {
-  // Execute the identity guard routine immediately on page initialization
-  routeGuard()
-    .then((session) => {
-      // TARGET THE LOADER: Find the loader by its HTML ID
-      const loader = document.getElementById("global-loader");
-      if (loader) {
-        // Hide it using a class or manual style assignment
-        loader.style.display = "none"; 
-        // Note: If you prefer Tailwind utility states, use: loader.classList.add("hidden");
-      }
-
-      // Check session context
-      if (session && session.authenticated) {
-        console.log(`StudyVerse session established for user context: ${session.name}`);
-        // You can run any home-page specific features for logged-in users here
-      } else {
-        console.log("Viewing StudyVerse home page as a guest workspace member.");
-      }
-    })
-    .catch((error) => {
-      console.error("Critical identity sync error on main thread:", error);
-      
-      // EMERGENCY FALLBACK: Turn off the loader anyway so the page doesn't break
-      const loader = document.getElementById("global-loader");
-      if (loader) loader.style.display = "none";
-    });
 });
