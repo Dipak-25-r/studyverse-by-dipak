@@ -14,6 +14,8 @@
   <header id="global-navbar"></header>
   <div id="top-banner-ad-container" class="w-full flex justify-center py-2 px-4"></div>
 
+  <div id="duo-feedback-container"></div>
+
   <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
     <div id="quiz-selection-panel" class="glass-card rounded-2xl p-6 border border-gray-800 scroll-animate">
       <h2 class="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 mb-2">Available Adaptive Assessments</h2>
@@ -72,6 +74,20 @@
       <button id="result-close-btn" class="w-full py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs font-bold transition-colors">Return to Vault Selection</button>
     </div>
   </main>
+
+  <div id="quiz-share-link-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[200000] flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-slate-900 rounded-2xl border border-gray-800 p-6 space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center">
+        <h3 class="text-xs uppercase font-black text-indigo-400 tracking-widest"><i class="fas fa-share-alt mr-1"></i> Shared Target Access Key Node Link</h3>
+        <button onclick="document.getElementById('quiz-share-link-modal').classList.add('hidden')" class="text-gray-500 hover:text-white text-xs focus:outline-none cursor-pointer"><i class="fas fa-times"></i></button>
+      </div>
+      <p class="text-[11px] text-gray-400 leading-relaxed">Copy this dynamically calculated parameter link string to route remote guest terminal nodes straight into this quiz matrix configuration:</p>
+      <div class="flex gap-2">
+        <input type="text" id="shared-link-output-field" readonly class="flex-grow bg-slate-950 border border-gray-800 rounded-xl px-3 py-2 text-xs font-mono text-indigo-300 focus:outline-none">
+        <button onclick="navigator.clipboard.writeText(document.getElementById('shared-link-output-field').value); alert('Target shared routing link payload cloned directly into local text string clip buffers!')" class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 rounded-xl text-xs font-bold text-white transition-colors cursor-pointer">Copy</button>
+      </div>
+    </div>
+  </div>
 
   <div id="bottom-banner-ad-container" class="w-full flex justify-center py-2 px-4 mt-auto"></div>
 

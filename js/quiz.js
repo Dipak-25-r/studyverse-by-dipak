@@ -58,7 +58,20 @@ class AssessmentRuntimeSubsystem {
         `;
       }
       this.userProfileToken = await routeGuard();
-      this.fetchQuizManifestLedgers();
+      
+      // Dynamic shared link interception layer matrix query parsing logic
+      const urlSecureQueryMatrix = new URLSearchParams(window.location.search);
+      const targetSharedQuizId = urlSecureQueryMatrix.get("quizId");
+      
+      if (targetSharedQuizId) {
+        // Shared link parsed successfully: Bypass directory index layout mapping
+        this.fetchQuizManifestLedgers().then(() => {
+          this.stageAssessmentContext(targetSharedQuizId);
+        });
+      } else {
+        this.fetchQuizManifestLedgers();
+      }
+      
       this.initializeVoiceEcosystemHardware();
     });
 
@@ -111,7 +124,12 @@ class AssessmentRuntimeSubsystem {
     this.panelSelection.classList.add("hidden");
     this.panelExecution.classList.remove("hidden");
     
+    // Inject custom colors mapped natively during form creation parameters setup loops
+    const activeAccentColor = this.activeQuizPayload.themeColor || "#6366f1";
     this.lblActiveTitle.innerText = this.activeQuizPayload.title;
+    this.lblActiveTitle.style.color = activeAccentColor;
+    if (this.btnProceed) this.btnProceed.style.backgroundColor = activeAccentColor;
+    
     this.renderActiveQuestionStructureNode();
   }
 
@@ -199,9 +217,54 @@ class AssessmentRuntimeSubsystem {
     const selectedOptionElement = this.matrixOptionsContainer.querySelector("[data-selected-index-key]");
     const activeSelectedValue = selectedOptionElement ? parseInt(selectedOptionElement.getAttribute("data-selected-index-key")) : -1;
     
-    this.runtimeAnswersArray.push(activeSelectedValue);
-    
     const activeQuestionsArray = this.activeQuizPayload.questions;
+    const currentCorrectAnswerIndex = parseInt(activeQuestionsArray[this.activeQuestionIndexPointer].correctIndex);
+
+    // Enforce systemic auto-submission routine loops if countdown timer hits zero boundary
+    if (enforceAutoSubmission) {
+      this.runtimeAnswersArray.push(activeSelectedValue);
+      this.proceedToNextSequenceNode(activeQuestionsArray);
+      return;
+    }
+
+    // Evaluate response inputs matching Duolingo animation structures layout configurations
+    let duoFeedbackOverlay = document.getElementById("duo-feedback-container");
+    if (!duoFeedbackOverlay) {
+      duoFeedbackOverlay = document.createElement("div");
+      duoFeedbackOverlay.id = "duo-feedback-container";
+      document.body.appendChild(duoFeedbackOverlay);
+    }
+
+    if (activeSelectedValue === currentCorrectAnswerIndex) {
+      // Correct validation node selection configuration mapping parameters
+      duoFeedbackOverlay.className = "duo-feedback-panel duo-correct slide-up";
+      duoFeedbackOverlay.innerHTML = `
+        <div class="flex items-center gap-3 text-sm font-bold"><i class="fas fa-check-circle text-lg"></i> <span>Awesome job! That's correct.</span></div>
+        <button id="duo-continue-action-btn" class="px-6 py-2.5 rounded-xl bg-white text-green-800 font-black uppercase text-xs tracking-wider border-none focus:outline-none cursor-pointer">Continue</button>
+      `;
+    } else {
+      // Incorrect answer: Trigger fault shaking animation structure across active chosen option button wrapper element
+      if (selectedOptionElement) {
+        selectedOptionElement.classList.add("shake-element");
+        setTimeout(() => selectedOptionElement.classList.remove("shake-element"), 400);
+      }
+      
+      duoFeedbackOverlay.className = "duo-feedback-panel duo-incorrect slide-up";
+      duoFeedbackOverlay.innerHTML = `
+        <div class="flex items-center gap-3 text-sm font-bold"><i class="fas fa-times-circle text-lg"></i> <span>Incorrect answer. Review details!</span></div>
+        <button id="duo-continue-action-btn" class="px-6 py-2.5 rounded-xl bg-white text-red-800 font-black uppercase text-xs tracking-wider border-none focus:outline-none cursor-pointer">Got It</button>
+      `;
+    }
+
+    // Bind action tracker pipeline loops to manage timeline transition configurations layout arrays
+    document.getElementById("duo-continue-action-btn").addEventListener("click", () => {
+      duoFeedbackOverlay.classList.remove("slide-up");
+      this.runtimeAnswersArray.push(activeSelectedValue);
+      this.proceedToNextSequenceNode(activeQuestionsArray);
+    });
+  }
+
+  proceedToNextSequenceNode(activeQuestionsArray) {
     if (this.activeQuestionIndexPointer + 1 < activeQuestionsArray.length) {
       this.activeQuestionIndexPointer++;
       this.renderActiveQuestionStructureNode();
@@ -313,3 +376,18 @@ class AssessmentRuntimeSubsystem {
 }
 
 export const ActiveQuizSystem = new AssessmentRuntimeSubsystem();
+// ==========================================================================
+// MODAL PRESENTATION SUBROUTINE
+// ==========================================================================
+function renderShareModal(linkString) {
+  const modalElement = document.getElementById("quiz-share-link-modal");
+  const outputField = document.getElementById("shared-link-output-field");
+
+  if (modalElement && outputField) {
+    outputField.value = linkString;
+    modalElement.classList.remove("hidden");
+  } else {
+    // Fallback if the DOM elements aren't immediately reachable
+    alert(`Quiz Created! Share link:\n${linkString}`);
+  }
+}
