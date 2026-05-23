@@ -35,6 +35,56 @@ body {
   border: 1px solid var(--glass-border);
 }
 
+#global-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 64px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--glass-border);
+  z-index: 9990;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+main, 
+#quiz-selection-panel, 
+#quiz-execution-panel, 
+.page-wrapper {
+  margin-top: 64px !important;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--accent);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+}
+
+.navbar-links-group {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.navbar-item {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.navbar-item:hover {
+  color: var(--text-primary);
+}
+
 .loader-container {
   position: fixed;
   top: 0;

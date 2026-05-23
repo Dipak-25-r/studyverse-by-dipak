@@ -45,6 +45,18 @@ class AssessmentRuntimeSubsystem {
 
   bindActionInterceptors() {
     document.addEventListener("DOMContentLoaded", async () => {
+      const headerNode = document.getElementById("global-navbar");
+      if (headerNode) {
+        headerNode.innerHTML = `
+          <a href="index.html" class="navbar-brand">STUDYVERSE</a>
+          <div class="navbar-links-group">
+            <a href="index.html" class="navbar-item">Home</a>
+            <a href="chat.html" class="navbar-item">Chat Spaces</a>
+            <a href="upload.html" class="navbar-item">Upload Vault</a>
+            <a href="profile.html" class="navbar-item">My Profile</a>
+          </div>
+        `;
+      }
       this.userProfileToken = await routeGuard();
       this.fetchQuizManifestLedgers();
       this.initializeVoiceEcosystemHardware();
