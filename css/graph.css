@@ -2,17 +2,22 @@
    STUDYVERSE COGNITIVE GEOMETRY CANVAS DESIGN MODULE
    ========================================================================== */
 
-#canvas-2d-viewport {
-  cursor: crosshair;
-  background-color: #030712;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
+/* Container mapping constraints to securely house the GeoGebra iframe layer */
+#geogebra-workspace-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: calc(100vh - 64px);
+  background-color: #020617 !important; /* Forces slate-950 matched background color primitive */
+  overflow: hidden;
+  transition: opacity 0.3s ease-in-out;
 }
 
-#canvas-3d-viewport canvas {
-  width: 100% !important;
-  height: 100% !important;
-  outline: none;
+/* Intercept GeoGebra inner elements to maintain strict system UI cohesion */
+#geogebra-workspace-container iframe {
+  border: none !important;
+  border-radius: 0px !important;
+  background-color: #020617 !important;
 }
 
 /* Slider normalizer modifications across hybrid environments tracking systems */
@@ -22,4 +27,52 @@ input[type="range"]::-webkit-slider-thumb {
 }
 input[type="range"]::-webkit-slider-thumb:active {
   transform: scale(1.3);
+}
+
+/* Custom premium scrollbar styling layout logic for the left options panel controls */
+section::-webkit-scrollbar {
+  width: 6px;
+}
+
+section::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.2);
+}
+
+section::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 9999px;
+}
+
+section::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Fix text layout jumping parameters during fast LaTeX MathJax execution swaps */
+#dynamic-equation-string {
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.05em;
+}
+
+/* Smooth micro-interaction transitions for vector color circle nodes */
+.btn-color-trigger {
+  cursor: pointer;
+  outline: none !important;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+}
+
+.btn-color-trigger:hover {
+  transform: scale(1.15);
+}
+
+.btn-color-trigger:active {
+  transform: scale(0.95);
+}
+
+/* Dynamic glassmorphism styling properties card adjustments */
+.glass-card {
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
