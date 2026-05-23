@@ -6,9 +6,8 @@
  */
 
 import { routeGuard } from "./auth.js";
-import { db, storage } from "../firebase/config.js";
+import { db } from "../firebase/config.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const activeUser = await routeGuard();
@@ -55,16 +54,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Sub-Routine: Modular Binary Core Ingestion Handler
-  async function stageBinaryToBucket(destinationDirectory, fileObject) {
-    if (!fileObject) return null;
-    const distinctFilename = `${Date.now()}_${fileObject.name.replace(/\s+/g, "_")}`;
-    const targetStorageRef = ref(storage, `${destinationDirectory}/${distinctFilename}`);
-    
-    // Commit raw byte arrays straight to designated storage node
-    const transmissionSnapshot = await uploadBytes(targetStorageRef, fileObject);
-    return await getDownloadURL(transmissionSnapshot.ref);
-  }
+  // Binary uploading removed: System operates completely via external URL linking.
 
   // Core Processing Routine: Library Note Payload Execution
   formNote.addEventListener("submit", async (e) => {
@@ -77,26 +67,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     const targetTitle = document.getElementById("note-title").value.trim();
     const targetDesc = document.getElementById("note-desc").value.trim();
 
-    const pdfHandle = document.getElementById("file-pdf").files[0];
-    const videoHandle = document.getElementById("file-video").files[0];
-    const imageHandle = document.getElementById("file-img").files[0];
+    // Read text strings representing URLs instead of reading from raw file element payloads
+    const pdfUrl = document.getElementById("link-pdf").value.trim();
+    const videoUrl = document.getElementById("link-video").value.trim();
+    const imageUrl = document.getElementById("link-img").value.trim();
 
     try {
-      // Execute pipeline tasks in concurrent sequence
-      const pdfUrl = await stageBinaryToBucket("pdfs", pdfHandle);
-      const videoUrl = await stageBinaryToBucket("videos", videoHandle);
-      const imageUrl = await stageBinaryToBucket("images", imageHandle);
-
-      // Mutate structured document reference catalog index tables
+      // Mutate structured document reference catalog index tables using shared links
       await addDoc(collection(db, "notes"), {
         standard: targetStd,
         subject: targetSub,
         chapter: targetCh,
         title: targetTitle,
         description: targetDesc,
-        pdfUrl,
-        videoUrl,
-        imageUrl,
+        pdfUrl: pdfUrl || null,
+        videoUrl: videoUrl || null,
+        imageUrl: imageUrl || null,
         uploaderUid: activeUser.uid,
         uploaderName: activeUser.name,
         timestamp: new Date().toISOString()
@@ -116,22 +102,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderStatus("Assembling social network data packet payload elements...");
 
     const textPayload = document.getElementById("post-text").value.trim();
-    const mediaHandle = document.getElementById("post-media").files[0];
+    const sharedMediaUrl = document.getElementById("post-media-link").value.trim();
 
     try {
-      let mediaUrl = null;
-      let mediaType = null;
-
-      if (mediaHandle) {
-        mediaType = mediaHandle.type;
-        mediaUrl = await stageBinaryToBucket("posts", mediaHandle);
-      }
-
-      // Sync data structure indices with timeline parameters
+      // Sync shared media text strings without staging underlying assets natively
       await addDoc(collection(db, "posts"), {
         text: textPayload,
-        mediaUrl,
-        mediaType,
+        mediaUrl: sharedMediaUrl || null,
+        mediaType: sharedMediaUrl ? "external_link" : null,
         uploaderUid: activeUser.uid,
         uploaderName: activeUser.name,
         likes: [],
