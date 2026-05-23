@@ -136,18 +136,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Account Infrastructure Registration Mutation Lifecycle
+  // Account Infrastructure Registration Mutation Lifecycle (With Loop and Auto-Fire Prevention Guards)
   formSignup.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const name = document.getElementById("sign-name").value.trim();
-    const address = document.getElementById("sign-address").value.trim();
-    const contact = document.getElementById("sign-contact").value.trim();
-    const email = document.getElementById("sign-email").value.trim();
-    const pass = document.getElementById("sign-password").value;
+
+    // 🛑 GUARD 1: Prevent automatic execution on empty fields during page load glitches
+    const emailInput = document.getElementById("sign-email");
+    const passInput = document.getElementById("sign-password");
+
+    if (!emailInput || !passInput) return;
+
+    const email = emailInput.value.trim();
+    const pass = passInput.value;
+
+    // If inputs are blank strings, do not send malicious/empty payloads to Google's SDK backend
+    if (!email || !pass) {
+      console.warn("Ecosystem Interceptor: Registration blocked. Form submission fired without complete user inputs.");
+      return; 
+    }
+
+    // 🛑 GUARD 2: Prevent password rule exhaustion errors (Minimum 6 characters rule)
+    if (pass.length < 6) {
+      triggerAlert("Registration aborted: Passwords must be at least 6 characters long.");
+      return;
+    }
+
+    const name = document.getElementById("sign-name")?.value.trim() || "New Member";
+    const address = document.getElementById("sign-address")?.value.trim() || "";
+    const contact = document.getElementById("sign-contact")?.value.trim() || "";
 
     try {
+      // Disengage form button state elements so users cannot multi-click during loading times
+      const submitBtn = formSignup.querySelector("button[type='submit']");
+      if (submitBtn) submitBtn.disabled = true;
+
       const res = await createUserWithEmailAndPassword(auth, email, pass);
-      // Synchronously write structured document record to Firebase Database Firestore index
+      
+      // Write user payload safely down to Cloud Firestore indices
       await setDoc(doc(db, "users", res.user.uid), {
         uid: res.user.uid,
         name,
@@ -160,10 +185,15 @@ document.addEventListener("DOMContentLoaded", () => {
         following: [],
         createdAt: new Date().toISOString()
       });
+
       triggerAlert("Identity initialized and database workspace structured successfully.", true);
       setTimeout(() => window.location.href = "profile.html", 1200);
     } catch (err) {
       triggerAlert(`Registration aborted: ${err.message}`);
+      
+      // Re-enable submit actions if registration fails so they can make adjustments
+      const submitBtn = formSignup.querySelector("button[type='submit']");
+      if (submitBtn) submitBtn.disabled = false;
     }
   });
 });
